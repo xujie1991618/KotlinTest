@@ -20,9 +20,28 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    signingConfigs {
+        config {
+            storeFile file("kk.jks") //签名文件路径
+            storePassword "111111"
+            keyAlias "key"
+            keyPassword "111111"  //签名密码
+        }
+    }
     aaptOptions {
         cruncherEnabled = false
         useNewCruncher = false
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            if (output.outputFile != null && output.outputFile.name.endsWith('.apk')
+                    && 'release'.equals(variant.buildType.name)) {
+                def apkFile = new File(
+                        output.outputFile.getParent(),
+                        "CodeBox_${variant.flavorName}_v${variant.versionName}_${variant.versionCode}.apk")
+                output.outputFile = apkFile
+            }
+        }
     }
 }
 
